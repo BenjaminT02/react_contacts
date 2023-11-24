@@ -1,8 +1,9 @@
-import {useContext, useState} from 'react';
+import {useContext} from 'react';
 import {Button, Container, Form} from 'react-bootstrap';
 import {AuthContext} from '../contexts/AuthContext';
 import {useNavigate} from 'react-router-dom';
 import {login} from '../services/authService';
+import useForm from '../../_misc/hooks/useForm';
 
 /**
  * Page d'authentification
@@ -11,30 +12,19 @@ import {login} from '../services/authService';
 function LoginPage() {
   const {setIsAuth} = useContext(AuthContext);
   const navigate = useNavigate();
-  const [data, setData] = useState({
-    email: '',
-    password: '',
-  });
 
-  /**
-   * Binding du formulaire et du state
-   * @param {{name:String, value:'String'}} target
-   */
-  function handleChange({name, value}) {
-    setData((prev) => ({...prev, [name]: value}));
-  }
-
-  /**
-   * Gestionnaire d'évènement de soumission du formulaire
-   * @param {Event} event
-   */
-  function handleSubmit(event) {
-    event.preventDefault();
+  const submitAction = () => {
     login(data.email, data.password).then((isConnected) => {
       setIsAuth(isConnected);
       navigate('/');
     });
-  }
+  };
+
+  const {data, handleChange, handleSubmit} = useForm({
+    email: '',
+    password: ''},
+  submitAction
+  );
 
   return (
     <Container>
